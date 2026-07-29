@@ -208,6 +208,20 @@ fn possible_underflow() {
 }
 
 #[test]
+fn huge_width_does_not_overflow() {
+    let grid = Grid::new(
+        vec!["a", "b"],
+        GridOptions {
+            direction: Direction::LeftToRight,
+            filling: Filling::Spaces(2),
+            width: usize::MAX,
+        },
+    );
+
+    assert_eq!(grid.row_count(), 1);
+}
+
+#[test]
 fn exact_fit() {
     let grid = Grid::new(
         vec!["a", "b", "c", "d"],

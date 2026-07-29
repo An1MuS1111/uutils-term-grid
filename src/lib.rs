@@ -192,7 +192,9 @@ impl<T: AsRef<str>> Grid<T> {
         }
 
         // Calculate widest column size with separator.
-        let widest_column = self.widest_cell_width + self.options.filling.width();
+        let widest_column = self
+            .widest_cell_width
+            .saturating_add(self.options.filling.width());
         // If it exceeds terminal's width, return, since it is impossible to fit.
         if widest_column > self.options.width {
             return Dimensions {
@@ -203,10 +205,12 @@ impl<T: AsRef<str>> Grid<T> {
 
         // Calculate the number of columns if all columns had the size of the largest
         // column. This is a lower bound on the number of columns.
-        let min_columns = self
-            .cells
-            .len()
-            .min((self.options.width + self.options.filling.width()) / widest_column);
+        let min_columns = self.cells.len().min(
+            self.options
+                .width
+                .saturating_add(self.options.filling.width())
+                / widest_column,
+        );
 
         // Calculate maximum number of lines and columns.
         let max_rows = div_ceil(self.cells.len(), min_columns);
